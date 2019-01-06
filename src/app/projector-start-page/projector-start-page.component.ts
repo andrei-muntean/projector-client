@@ -1,3 +1,4 @@
+import { CookieService } from 'ngx-cookie-service';
 import { Component, OnInit } from '@angular/core';
 import { RequestsService } from '../requests.service';
 import { IPresentation } from '../models';
@@ -21,9 +22,14 @@ export class ProjectorStartPageComponent implements OnInit {
   errors: string; // error messages to be displayed
   private presentation: IPresentation = {};
 
-  constructor(private _requestService: RequestsService, private _router: Router) { }
+  constructor(private _requestService: RequestsService, 
+    private _coockieService: CookieService,
+    private _router: Router) { }
 
   ngOnInit() {
+    // delete all cookies
+    this._coockieService.deleteAll('/');
+    // request stats
     this._requestService.getStats().pipe(
       map((response: Response) => {
         return [{ status: response.status, json: response }];
@@ -57,13 +63,6 @@ export class ProjectorStartPageComponent implements OnInit {
     }
   }
   /**
-   * Get base 64 of a text
-   * @param text just the base64 content from the string
-   */
-  getBase64(text: string): string {
-    return text.split(',')[1];
-  }
-  /**
    * Upload presentation and start it
    */
   upload() {
@@ -76,11 +75,15 @@ export class ProjectorStartPageComponent implements OnInit {
       map((response: Response) => {
         return [{status: response.status, json: response }];
       }),
-      catchError(error => of([{ status: error.status, json: error }]))
+      catchError(error => 
+        of(
+          [{ status: error.status, json: error }]
+        )
+      )
     ).subscribe(response => {
       if (response[0].json.ownerUUID) {
-        console.log('I got here!!')
-        // TODO store ownerUUID
+        // store ownerUUID
+        this._coockieService.set('ownerUUID', response[0].json.ownerUUID, 7200, '/');
         // go to next page
         this._router.navigate(['/control']);
       }

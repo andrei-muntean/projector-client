@@ -8,6 +8,7 @@ import { ProjectorStartPageComponent } from './projector-start-page/projector-st
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ProjectorViewPageComponent } from './projector-view-page/projector-view-page.component';
 import { ProjectorControlPageComponent } from './projector-control-page/projector-control-page.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { ProjectorControlPageComponent } from './projector-control-page/projecto
       startFromZero: false
     })
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
