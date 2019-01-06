@@ -37,8 +37,8 @@ h3 {
 .room-name-label, .status-label {
     font-size: 10pt;
 }
-.status {
-    padding-top: 15px;
+.status, .connect-and-status {
+    padding-top: 5px;
 }
 .loading {
     padding-top: 30px;

@@ -6,11 +6,15 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectorStartPageComponent } from './projector-start-page/projector-start-page.component';
 import { NgCircleProgressModule } from 'ng-circle-progress';
+import { ProjectorViewPageComponent } from './projector-view-page/projector-view-page.component';
+import { ProjectorControlPageComponent } from './projector-control-page/projector-control-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProjectorStartPageComponent
+    ProjectorStartPageComponent,
+    ProjectorViewPageComponent,
+    ProjectorControlPageComponent
   ],
   imports: [
     BrowserModule,

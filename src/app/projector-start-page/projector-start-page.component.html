@@ -22,7 +22,7 @@
       <div class="col-5">
         <div class="round-div">
           <circle-progress [percent]="100" [outerStrokeWidth]="10" [innerStrokeWidth]="10" [outerStrokeColor]="isOwnerPresent ? '#28a745' : '#dc3545'"
-            [innerStrokeColor]="isOwnerPresent ? '#adedbb' : '#fcd1d5'" animation="true" animationDuration="300" title="Owner"></circle-progress>
+            [innerStrokeColor]="isOwnerPresent ? '#adedbb' : '#fcd1d5'" animation="false" animationDuration="0" title="Owner"></circle-progress>
         </div>
       </div>
       <div class="col-5">
@@ -34,21 +34,18 @@
       </div>
     </div>
     <div class="room">
-      <div class="room-label">
-        <span class="room-name-label">Room Name</span>
+      <div class="col room-label">
+        <span class="room-name-label">Presentation</span>
       </div>
       <div class="room-name">
         <h3>{{runningFileName}}</h3>
       </div>
     </div>
-    <div class="connect-and-status">
-      <div class="connect">
+    <div class="connect-and-status row justify-content-center">
+      <div class="connect col-md-4">
         <button type="button" class="btn btn-success" (click)="connect()" [disabled]="isLoading">Connect</button>
       </div>
-      <div class="status">
-        <div class="status-label">
-            <span>Status</span>
-        </div>
+      <div class="status col-sm-1">
         <div class="spinner-grow text-success" role="status">
           <span class="sr-only">Loading...</span>
         </div>

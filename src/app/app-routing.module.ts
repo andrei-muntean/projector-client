@@ -1,10 +1,17 @@
+import { ProjectorStartPageComponent } from './projector-start-page/projector-start-page.component';
+import { ProjectorViewPageComponent } from './projector-view-page/projector-view-page.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { ProjectorControlPageComponent } from './projector-control-page/projector-control-page.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {path: '', component: ProjectorStartPageComponent},
+  {path: 'presentation', component: ProjectorViewPageComponent},
+  {path: 'control', component: ProjectorControlPageComponent}
+];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { enableTracing: true } )],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
