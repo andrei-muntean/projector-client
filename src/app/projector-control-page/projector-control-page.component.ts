@@ -1,3 +1,4 @@
+import { CookieService } from 'ngx-cookie-service';
 import { map, catchError, repeat, repeatWhen } from 'rxjs/operators';
 import { WebsocketService } from './../websocket.service';
 import { Component, OnInit } from '@angular/core';
@@ -26,12 +27,12 @@ export class ProjectorControlPageComponent implements OnInit {
   constructor(private _wsService: WebsocketService,
     private _requestService: RequestsService,
     private _router: Router,
-    private _sanitizer: DomSanitizer) {
+    private _sanitizer: DomSanitizer,
+    private _cookieService: CookieService) {
     this.messages = [];
   }
 
   ngOnInit() {
-
     this._requestService.getStats().pipe(
       map((response: Response) => {
         return [{ status: response.status, json: response }];
@@ -54,10 +55,10 @@ export class ProjectorControlPageComponent implements OnInit {
               this.handleMessages(event);
             }
             if (event.type == "close") {
-              console.log('The socket connection has been closed');
+              this.redirectToHomePage();
             }
             if (event.type == "open") {
-              console.log('The socket connection has been establishe');
+
             }
           });
         }
@@ -70,7 +71,10 @@ export class ProjectorControlPageComponent implements OnInit {
         }
       });
   }
-
+  /**
+   * Handle Socket Messages
+   * @param event 
+   */
   handleMessages(event) {
     if (event.data) {
       let data = JSON.parse(event.data);
@@ -82,7 +86,7 @@ export class ProjectorControlPageComponent implements OnInit {
         this.totalSlides = data.totalSlides
       }
       if (data.preview) {
-        this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + data.preview);
+        this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl(data.preview);
       }
     }
   }
@@ -98,7 +102,8 @@ export class ProjectorControlPageComponent implements OnInit {
    * to websocket
    */
   nextSlide() {
-
+    let command = JSON.stringify({command: 'transition_next'});
+    this._wsService.send(command);
   }
 
   /**
@@ -107,7 +112,8 @@ export class ProjectorControlPageComponent implements OnInit {
    * to websocket
    */
   prevSlide() {
-
+    let command = JSON.stringify({command: 'transition_previous'});
+    this._wsService.send(command);
   }
 
   /**
@@ -116,7 +122,9 @@ export class ProjectorControlPageComponent implements OnInit {
   * to websocket
   */
   stopSlide() {
-
+    let command = JSON.stringify({command: 'presentation_stop'});
+    this._wsService.send(command);
+    this._wsService.close();
+    this._cookieService.deleteAll();
   }
-
 }

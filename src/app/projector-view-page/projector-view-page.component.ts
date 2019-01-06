@@ -1,11 +1,12 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { WebsocketService } from './../websocket.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { RequestsService } from '../requests.service';
-import { map, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { map, catchError, repeatWhen } from 'rxjs/operators';
+import { of, interval } from 'rxjs';
 import { IPresentation } from '../models';
+import { NgbModalConfig, NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-projector-view-page',
@@ -14,24 +15,26 @@ import { IPresentation } from '../models';
 })
 export class ProjectorViewPageComponent implements OnInit {
 
-currentSlide = 0;
+  currentSlide = 0;
   totalSlides = 0;
   usersOnline = 0;
   isLoading = true;
   isOwnerPresent = false;
-  presentation: IPresentation = {fileName: '', uploadFile: ''};
+  presentation: IPresentation = { fileName: '', uploadFile: '' };
 
   constructor(private _wsService: WebsocketService,
     private _requestService: RequestsService,
     private _router: Router,
-    private _sanitizer: DomSanitizer) {  }
+    private _sanitizer: DomSanitizer) {    
+    }
 
   ngOnInit() {
     this._requestService.getStats().pipe(
       map((response: Response) => {
         return [{ status: response.status, json: response }];
       }),
-      catchError(error => of([{ status: error.status, json: error }]))
+      catchError(error => of([{ status: error.status, json: error }])),
+      repeatWhen(() => interval(10000))
     ).subscribe(
       res => {
         console.log(res);
@@ -47,10 +50,10 @@ currentSlide = 0;
               this.handleMessages(event);
             }
             if (event.type == "close") {
-
+              this.redirectToHomePage();
             }
             if (event.type == "open") {
-
+              this.handleMessages(event);
             }
           });
         }
@@ -79,7 +82,7 @@ currentSlide = 0;
       }
       if (data.preview) {
         //this.presentation.fileName = file.name;
-        this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + data.preview);
+        this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl(data.preview);
       }
     }
   }
@@ -89,5 +92,4 @@ currentSlide = 0;
   redirectToHomePage() {
     this._router.navigate(['/home']);
   }
-
 }

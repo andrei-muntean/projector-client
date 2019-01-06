@@ -1,3 +1,4 @@
+import { CookieService } from 'ngx-cookie-service';
 import { Injectable, EventEmitter } from '@angular/core';
 
 /**
@@ -9,9 +10,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 })
 export class WebsocketService {
 
-
-    private url = 'http://localhost:8080';
-
+    private ownerUUID: string;
     private socket: WebSocket;
     private listener: EventEmitter<any> = new EventEmitter();
 
@@ -28,15 +27,19 @@ export class WebsocketService {
         }
     }
 
-    public send(data: string) {
+    connect() {
+
+    }
+
+    send(data: string) {
         this.socket.send(data);
     }
 
-    public close() {
+    close() {
         this.socket.close();
     }
 
-    public getEventListener() {
+    getEventListener() {
         return this.listener;
     }
 }
