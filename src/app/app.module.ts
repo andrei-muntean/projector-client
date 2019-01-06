@@ -9,19 +9,22 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ProjectorViewPageComponent } from './projector-view-page/projector-view-page.component';
 import { ProjectorControlPageComponent } from './projector-control-page/projector-control-page.component';
 import { CookieService } from 'ngx-cookie-service';
+import { ModalComponent } from './modal/modal.component';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
     AppComponent,
     ProjectorStartPageComponent,
     ProjectorViewPageComponent,
-    ProjectorControlPageComponent
+    ProjectorControlPageComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    NgbProgressbarModule,
+    NgbModule.forRoot(),
     NgCircleProgressModule.forRoot({
       radius: 60,
       space: -10,
@@ -39,7 +42,8 @@ import { CookieService } from 'ngx-cookie-service';
       startFromZero: false
     })
   ],
-  providers: [CookieService],
-  bootstrap: [AppComponent]
+  providers: [CookieService, NgbActiveModal],
+  bootstrap: [AppComponent],
+  entryComponents: [ModalComponent]
 })
 export class AppModule { }

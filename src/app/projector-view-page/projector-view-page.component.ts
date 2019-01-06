@@ -3,10 +3,11 @@ import { WebsocketService } from './../websocket.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { RequestsService } from '../requests.service';
-import { map, catchError, repeatWhen } from 'rxjs/operators';
+import { map, catchError, repeatWhen, takeWhile } from 'rxjs/operators';
 import { of, interval } from 'rxjs';
 import { IPresentation } from '../models';
-import { NgbModalConfig, NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from '../modal/modal.component';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-projector-view-page',
@@ -21,12 +22,18 @@ export class ProjectorViewPageComponent implements OnInit {
   isLoading = true;
   isOwnerPresent = false;
   presentation: IPresentation = { fileName: '', uploadFile: '' };
+  _isAlive = true;
+  showModal = true;
 
   constructor(private _wsService: WebsocketService,
     private _requestService: RequestsService,
     private _router: Router,
-    private _sanitizer: DomSanitizer) {    
-    }
+    private _sanitizer: DomSanitizer,
+    private _modalService: NgbModal,
+    modalConfig: NgbModalConfig) {
+      modalConfig.backdrop = 'static';
+      modalConfig.keyboard = false;
+  }
 
   ngOnInit() {
     this._requestService.getStats().pipe(
@@ -34,7 +41,8 @@ export class ProjectorViewPageComponent implements OnInit {
         return [{ status: response.status, json: response }];
       }),
       catchError(error => of([{ status: error.status, json: error }])),
-      repeatWhen(() => interval(10000))
+      repeatWhen(() => interval(10000)),
+      takeWhile(() => this._isAlive)
     ).subscribe(
       res => {
         console.log(res);
@@ -50,7 +58,7 @@ export class ProjectorViewPageComponent implements OnInit {
               this.handleMessages(event);
             }
             if (event.type == "close") {
-              this.redirectToHomePage();
+              this._isAlive = false;
             }
             if (event.type == "open") {
               this.handleMessages(event);
@@ -84,6 +92,12 @@ export class ProjectorViewPageComponent implements OnInit {
         //this.presentation.fileName = file.name;
         this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl(data.preview);
       }
+      if (data.command === 'slideshow_finished') {
+        this.open();
+        this._wsService.close();
+        this._isAlive = false;
+        this.redirectToHomePage();
+      }
     }
   }
   /**
@@ -91,5 +105,12 @@ export class ProjectorViewPageComponent implements OnInit {
    */
   redirectToHomePage() {
     this._router.navigate(['/home']);
+  }
+  /**
+   * Open the warning modal
+   */
+  open() {
+    const modalRef = this._modalService.open(ModalComponent, {centered: true});
+    modalRef.componentInstance.title = 'About';
   }
 }

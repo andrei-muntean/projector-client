@@ -1,5 +1,5 @@
 import { CookieService } from 'ngx-cookie-service';
-import { map, catchError, repeat, repeatWhen } from 'rxjs/operators';
+import { map, catchError, repeat, repeatWhen, takeWhile } from 'rxjs/operators';
 import { WebsocketService } from './../websocket.service';
 import { Component, OnInit } from '@angular/core';
 import { RequestsService } from '../requests.service';
@@ -21,6 +21,7 @@ export class ProjectorControlPageComponent implements OnInit {
   totalSlides = 0;
   usersOnline = 0;
   presentation: IPresentation = {};
+  _isAlive = true;
 
   messages: Array<any>;
 
@@ -38,7 +39,8 @@ export class ProjectorControlPageComponent implements OnInit {
         return [{ status: response.status, json: response }];
       }),
       catchError(error => of([{ status: error.status, json: error }])),
-      repeatWhen(() => interval(10000))
+      repeatWhen(() => interval(10000)),
+      takeWhile(() => this._isAlive)
     ).subscribe(
       res => {
         if (res[0].status === 200) {
@@ -55,6 +57,7 @@ export class ProjectorControlPageComponent implements OnInit {
               this.handleMessages(event);
             }
             if (event.type == "close") {
+              this._isAlive = false;
               this.redirectToHomePage();
             }
             if (event.type == "open") {
@@ -87,6 +90,9 @@ export class ProjectorControlPageComponent implements OnInit {
       }
       if (data.preview) {
         this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl(data.preview);
+      }
+      if (data.command === 'slideshow_finished') {
+        this._wsService.close();
       }
     }
   }
@@ -124,7 +130,7 @@ export class ProjectorControlPageComponent implements OnInit {
   stopSlide() {
     let command = JSON.stringify({command: 'presentation_stop'});
     this._wsService.send(command);
-    this._wsService.close();
+    this._isAlive = false;
     this._cookieService.deleteAll();
   }
 }
