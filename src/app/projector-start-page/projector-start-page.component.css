@@ -43,3 +43,6 @@ h3 {
 .loading {
     padding-top: 30px;
 }
+.error-msg {
+    padding-top: 5px;
+}

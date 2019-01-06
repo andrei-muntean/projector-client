@@ -5,9 +5,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProjectorControlPageComponent } from './projector-control-page/projector-control-page.component';
 
 const routes: Routes = [
-  {path: '', component: ProjectorStartPageComponent},
+  {path: 'home', component: ProjectorStartPageComponent},
   {path: 'presentation', component: ProjectorViewPageComponent},
-  {path: 'control', component: ProjectorControlPageComponent}
+  {path: 'control', component: ProjectorControlPageComponent},
+  { path: '', redirectTo: '/home', pathMatch: 'full'}
 ];
 
 @NgModule({

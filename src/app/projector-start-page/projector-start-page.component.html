@@ -11,6 +11,9 @@
     </div>
     <div class="custom-button">
       <button type="button" class="btn btn-secondary" (click)="upload()" [disabled]="isLoading">Upload</button>
+      <div *ngIf="errors" class="error-msg text-danger">
+        {{ errors }}
+      </div>
     </div>
   </div>
   <!-- Succesful View -->

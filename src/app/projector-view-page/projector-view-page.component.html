@@ -1,21 +1,30 @@
 <div class="container">
-  <div class="preview">
-    <img class="preview-img" src="https://www.gettyimages.com/gi-resources/images/CreativeLandingPage/HP_Sept_24_2018/CR3_GettyImages-159018836.jpg">
-  </div>
-  <div class="row justify-content-center">
-    <div class="presentation-name col-sm-3">
-      <span>{{presentationName}}</span>
-    </div>
-    <div class="current-slide col-sm-1">
-      <span>{{currentSlide}}/{{totalSlides}}</span>
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center loading">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="sr-only">Loading...</span>
     </div>
   </div>
-  <div class="row justify-content-center">
-    <div class="col-2 text-success">
-      <span>Connected</span>
+  <!-- Projector Page -->
+  <div *ngIf="!isLoading" class="projector-page">
+    <div class="preview">
+      <img class="preview-img" src="https://www.gettyimages.com/gi-resources/images/CreativeLandingPage/HP_Sept_24_2018/CR3_GettyImages-159018836.jpg">
     </div>
-    <div class="col-3 text-success">
-      <span>{{ussersOnline}} users online</span>
+    <div class="row justify-content-center">
+      <div class="presentation-name col-sm-3">
+        <span>{{presentationName}}</span>
+      </div>
+      <div class="current-slide col-sm-1">
+        <span>{{currentSlide}}/{{totalSlides}}</span>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-2 text-success">
+        <span>Connected</span>
+      </div>
+      <div class="col-3 text-success">
+        <span>{{ussersOnline}} users online</span>
+      </div>
     </div>
   </div>
 </div>

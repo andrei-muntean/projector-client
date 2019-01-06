@@ -18,6 +18,7 @@ export class ProjectorStartPageComponent implements OnInit {
   usersOnline = 0;
   uploadText = 'Upload Your Presentation';
   runningFileName = 'Running File Name';
+  errors: string; // error messages to be displayed
   private presentation: IPresentation = {};
 
   constructor(private _requestService: RequestsService, private _router: Router) { }
@@ -30,7 +31,6 @@ export class ProjectorStartPageComponent implements OnInit {
       catchError(error => of([{ status: error.status, json: error }]))
     ).subscribe(
       res => {
-        console.log(res);
         if (res[0].status === 200) {
           this.isFound = true;
           this.isOwnerPresent = res[0].json.body.isOwnerPresent;
@@ -38,7 +38,6 @@ export class ProjectorStartPageComponent implements OnInit {
           this.runningFileName = res[0].json.body.name;
         }
       }, err => {
-        console.log(err);
         if (err[0].status === 404) {
           this.isFound = false;
         }
@@ -68,23 +67,29 @@ export class ProjectorStartPageComponent implements OnInit {
    * Upload presentation and start it
    */
   upload() {
+    // clear errors
+    this.errors = '';
+    // start loading annimation
     this.isLoading = true;
-    console.log(this.presentation);
+    // post presentation
     this._requestService.postPresentation(this.presentation).pipe(
       map((response: Response) => {
-        return [{ json: response }];
+        return [{status: response.status, json: response }];
       }),
       catchError(error => of([{ status: error.status, json: error }]))
     ).subscribe(response => {
-      console.log(response);
       if (response[0].json.ownerUUID) {
         console.log('I got here!!')
         // TODO store ownerUUID
         // go to next page
         this._router.navigate(['/control']);
       }
+      else if (response[0].status !== 200) {
+        this.isLoading = false;
+        this.isFound = false;
+        this.errors = 'There is no upload file or the server is down'
+      }
     }, err => {
-      console.log(err);
       this.isFound = false;
       this.isLoading = false;
     });
@@ -94,7 +99,6 @@ export class ProjectorStartPageComponent implements OnInit {
    */
   connect() {
     this.isLoading = true;
-    // TODO open websocket
     // go to next page
     this._router.navigate(['/presentation']);
   }
