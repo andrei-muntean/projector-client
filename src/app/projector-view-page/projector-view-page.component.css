@@ -14,3 +14,17 @@
     width: auto;
     height: 40%
 }
+.presentation-name {
+    padding-top: 15px;
+}
+.panel {
+    padding-bottom: 10px;
+}
+.title {
+    font-size: 28pt;
+    font-weight: 500;
+}
+.subtilte {
+    font-size: 18pt;
+    font-weight: 400;
+}

@@ -1,9 +1,11 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { WebsocketService } from './../websocket.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RequestsService } from '../requests.service';
 import { map, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { IPresentation } from '../models';
 
 @Component({
   selector: 'app-projector-view-page',
@@ -12,19 +14,17 @@ import { of } from 'rxjs';
 })
 export class ProjectorViewPageComponent implements OnInit {
 
-  presentationName = 'Presentation Name';
-  currentSlide = 0;
+currentSlide = 0;
   totalSlides = 0;
-  ussersOnline = 0;
+  usersOnline = 0;
   isLoading = true;
-
-  messages: Array<any>;
+  isOwnerPresent = false;
+  presentation: IPresentation = {fileName: '', uploadFile: ''};
 
   constructor(private _wsService: WebsocketService,
     private _requestService: RequestsService,
-    private _router: Router) {
-    this.messages = [];
-  }
+    private _router: Router,
+    private _sanitizer: DomSanitizer) {  }
 
   ngOnInit() {
     this._requestService.getStats().pipe(
@@ -37,20 +37,20 @@ export class ProjectorViewPageComponent implements OnInit {
         console.log(res);
         if (res[0].status === 200) {
           this.isLoading = false;
+          // populate local values
+          this.isOwnerPresent = res[0].json.body.isOwnerPresent;
+          this.usersOnline = res[0].json.body.controllers;
+          this.presentation.fileName = res[0].json.body.name;
+          // open socket
           this._wsService.getEventListener().subscribe(event => {
             if (event.type == "message") {
-              console.log(event.data);
-              let data = event.data.content;
-              if (event.data.sender) {
-                data = event.data.sender + ": " + data;
-              }
-              this.messages.push(data);
+              this.handleMessages(event);
             }
             if (event.type == "close") {
-              this.messages.push("/The socket connection has been closed");
+
             }
             if (event.type == "open") {
-              this.messages.push("/The socket connection has been established");
+
             }
           });
         }
@@ -64,7 +64,25 @@ export class ProjectorViewPageComponent implements OnInit {
         }
       });
   }
-
+  /**
+   * Handle emited messages
+   */
+  handleMessages(event) {
+    if (event.data) {
+      let data = JSON.parse(event.data);
+      console.log(data);
+      if (data.currentSlide) {
+        this.currentSlide = data.currentSlide
+      }
+      if (data.totalSlides) {
+        this.totalSlides = data.totalSlides
+      }
+      if (data.preview) {
+        //this.presentation.fileName = file.name;
+        this.presentation.uploadFile = this._sanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + data.preview);
+      }
+    }
+  }
   /**
    * Redirect To Home Page
    */

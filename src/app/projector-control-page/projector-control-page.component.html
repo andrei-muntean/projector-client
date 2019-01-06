@@ -8,37 +8,28 @@
   <!-- Projector Page -->
   <div *ngIf="!isLoading" class="projector-page">
     <div class="preview">
-      <img class="preview-img" src="https://www.gettyimages.com/gi-resources/images/CreativeLandingPage/HP_Sept_24_2018/CR3_GettyImages-159018836.jpg">
+      <img class="preview-img" [src]="this.presentation.uploadFile" alt="presentation.fileName">
     </div>
-    <div class="row justify-content-center">
-      <div class="presentation-name col-sm-3">
-        <span>{{presentationName}}</span>
-      </div>
-      <div class="current-slide col-sm-1">
-        <span>{{currentSlide}}/{{totalSlides}}</span>
-      </div>
+    <div class="presentation-name panel">
+      <span class="title">{{presentation.fileName}}</span>
+    </div>
+    <div class="current-slide panel">
+      <span class="subtitle">Current slide at {{currentSlide}}/{{totalSlides}}</span>
+    </div>
+    <div class="users-online text-success panel">
+      <span class="subtitle">{{usersOnline}} users connected</span>
     </div>
     <div class="controls">
       <div class="row justify-content-center">
-        <div class="col-2" (click)="prevSlide()">
-          <svg></svg>
-          <img class="svg" src="/assets/images/left.svg">
+        <div class="col-2 prev-slide" (click)="prevSlide()">
+          <div class="arrow-triangle right"></div>
         </div>
-        <div class="col-2" (click)="stopSlide()">
-          <img class="svg" src="/assets/images/stop.svg">
+        <div class="col-2 stop-slide" (click)="stopSlide()">
+          <div class="square stop"></div>
         </div>
-        <div class="col-2" (click)="nextSlide()">
-          <img class="svg" src="/assets/images/right.svg">
+        <div class="col-3 next-slide" (click)="nextSlide()">
+          <div class="arrow-triangle left"></div>
         </div>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-3 text-success">
-        <span>Connected</span>
-      </div>
-      <div class="col-5 text-success">
-        <span>{{ussersOnline}} users online</span>
       </div>
     </div>
   </div>
-</div>
