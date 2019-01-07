@@ -110,7 +110,9 @@ export class ProjectorViewPageComponent implements OnInit {
    * Open the warning modal
    */
   open() {
-    const modalRef = this._modalService.open(ModalComponent, {centered: true});
-    modalRef.componentInstance.title = 'About';
+    if (!this._modalService.hasOpenModals()) {
+      const modalRef = this._modalService.open(ModalComponent, {centered: true});
+      modalRef.componentInstance.title = 'About';
+    }
   }
 }

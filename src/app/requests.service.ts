@@ -8,12 +8,7 @@ import { IPresentation } from './models';
 })
 export class RequestsService {
 
-  private _url = 'http://localhost:8080/';
-  private _httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type':  'application/json'
-    })
-  };
+  private _url = 'http://192.168.4.1/';
 
   constructor(private _http: HttpClient) { }
 
