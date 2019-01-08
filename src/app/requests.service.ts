@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IPresentation } from './models';
+import * as AppConfig from '../assets/app-config.json'
 
 @Injectable({
   providedIn: 'root'
 })
 export class RequestsService {
 
-  private _url = 'http://192.168.4.1/';
+  private _url = AppConfig.default['requestUrl'];
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient) { 
+    console.log(AppConfig);
+  }
 
   /**
    * Get stats from server:
@@ -18,7 +21,7 @@ export class RequestsService {
    * 200 - means that slideshow is present
    */
   getStats(): Observable<any> {
-    return this._http.get(this._url + 'stats', {observe: 'response'});
+    return this._http.get(this._url + '/stats', {observe: 'response'});
   }
   /**
    * Post presentation on local server
@@ -29,6 +32,6 @@ export class RequestsService {
     formData.append('fileName', presentation.fileName);
     formData.append('uploadFile', presentation.uploadFile);
     console.log(formData.get('uploadFile'));
-    return this._http.post(this._url + 'upload', formData);
+    return this._http.post(this._url + '/upload', formData);
   }
 }

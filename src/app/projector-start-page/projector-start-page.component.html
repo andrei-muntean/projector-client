@@ -44,15 +44,8 @@
         <h3>{{runningFileName}}</h3>
       </div>
     </div>
-    <div class="connect-and-status row justify-content-center">
-      <div class="connect col-md-4">
-        <button type="button" class="btn btn-success" (click)="connect()" [disabled]="isLoading">Connect</button>
-      </div>
-      <div class="status col-sm-1">
-        <div class="spinner-grow text-success" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
+    <div class="connect">
+      <button type="button" class="btn btn-success" (click)="connect()" [disabled]="isLoading">Connect</button>
     </div>
   </div>
   <!-- Loading spinner -->
