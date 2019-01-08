@@ -30,12 +30,7 @@ export class ProjectorStartPageComponent implements OnInit {
     // delete all cookies
     this._coockieService.deleteAll('/');
     // request stats
-    this._requestService.getStats().pipe(
-      map((response: Response) => {
-        return [{ status: response.status, json: response }];
-      }),
-      catchError(error => of([{ status: error.status, json: error }]))
-    ).subscribe(
+    this._requestService.getStats().subscribe(
       res => {
         if (res[0].status === 200) {
           this.isFound = true;
@@ -49,7 +44,10 @@ export class ProjectorStartPageComponent implements OnInit {
         }
       });
   }
-
+  /**
+   * file chooser event listener
+   * @param event 
+   */
   fileChanged(event) {
     const fileList: FileList = event.target.files;
     if (fileList.length > 0) {
@@ -59,7 +57,6 @@ export class ProjectorStartPageComponent implements OnInit {
       this.presentation.uploadFile = file;
       // update upload text
       this.uploadText = file.name;
-      console.log(file);
     }
   }
   /**
@@ -85,7 +82,7 @@ export class ProjectorStartPageComponent implements OnInit {
         // store ownerUUID
         this._coockieService.set('ownerUUID', response[0].json.ownerUUID, 7200, '/');
         // go to next page
-        this._router.navigate(['/control']);
+        this._router.navigate(['home/control']);
       }
       else if (response[0].status !== 200) {
         this.isLoading = false;
@@ -103,6 +100,6 @@ export class ProjectorStartPageComponent implements OnInit {
   connect() {
     this.isLoading = true;
     // go to next page
-    this._router.navigate(['/presentation']);
+    this._router.navigate(['/home/presentation']);
   }
 }
